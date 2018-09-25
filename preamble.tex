@@ -1,0 +1,16 @@
+\usepackage{xcolor}
+\usepackage{titlesec}
+
+\definecolor{niceblue}{HTML}{008cba}
+
+\titleformat{\section}[hang]{\Large\bfseries}{\thesection}{1em}{\Large\bfseries}[\vspace{-5mm}\textcolor{niceblue}{\rule{\linewidth}{0.3mm}}\vspace{-3mm}]
+\titleformat{name=\section,numberless}[hang]{}{}{0pt}{\Large\bfseries}[\vspace{-5mm}\textcolor{niceblue}{\rule{\linewidth}{0.3mm}}\vspace{-3mm}]
+\titleformat{name=\subsection}[hang]{\large\bfseries}{\thesubsection}{1em}{\large\bfseries}[\vspace{-5mm}\textcolor{niceblue}{\rule{\linewidth}{0.3mm}}\vspace{-3mm}]
+\titleformat{name=\subsubsection}[hang]{\bfseries}{\thesubsubsection}{1em}{\bfseries}[\vspace{-5mm}\textcolor{niceblue}{\rule{\linewidth}{0.3mm}}\vspace{-3mm}]
+
+\usepackage{multicol}
+\newcommand{\hideFromPandoc}[1]{#1}
+\hideFromPandoc{
+  \let\Begin\begin
+  \let\End\end
+}

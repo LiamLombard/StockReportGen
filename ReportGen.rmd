@@ -1,0 +1,105 @@
+---
+title: "Stock Report"
+subparagraph: true
+output:
+  pdf_document:
+    number_sections: true
+    includes:
+      in_header: preamble.tex
+params:
+  settings:
+    value: x
+---
+```{r, include=FALSE}
+source("processing.r")
+print(settings)
+```
+
+# Stock Code: `r settings$stockname`
+
+## All time
+```{r, fig.width=figureWidth, fig.height=figureHeight, echo=FALSE}
+timePlot(data, times, data$Close)
+```
+
+### Daily maximum variance
+
+```{r, fig.width=figureWidth, fig.height=figureHeight, echo=FALSE}
+timePlot(data, times, data$High - data$Low)
+```
+
+### Daily Close vs Open
+
+```{r, fig.width=figureWidth, fig.height=figureHeight, echo=FALSE}
+timePlot(data, times, data$Close - data$Open)
+```
+
+### Quarterly Closing
+
+```{r, fig.width=figureWidth, fig.height=figureHeight, echo=FALSE}
+quarterPlot(datazoo)
+```
+
+### Boxplots for above three statistics
+
+\Begin{multicols}{3}
+
+```{r, fig.width=figureWidth/3.3, fig.height=figureHeight, echo=FALSE, message=FALSE}
+boxPlot(data, data$Close)
+```
+
+```{r, fig.width=figureWidth/3.3, fig.height=figureHeight, echo=FALSE, message=FALSE}
+boxPlot(data, data$High - data$Low)
+```
+
+```{r, fig.width=figureWidth/3.3, fig.height=figureHeight, echo=FALSE, message=FALSE}
+boxPlot(data, data$Close - data$Open)
+```
+\End{multicols}
+
+### More stats
+```{r, echo=FALSE, results='asis'}
+tableGen(data$Close, "Closing Stats")
+```
+
+## Last Year
+
+```{r, fig.width=figureWidth, fig.height=figureHeight, echo=FALSE}
+dataTail <- tail(data, 365)
+timesTail <-tail(times, 365)
+
+timePlot(dataTail, timesTail, dataTail$Close)
+```
+
+### Daily maximum variance
+
+```{r, fig.width=figureWidth, fig.height=figureHeight, echo=FALSE}
+timePlot(dataTail, timesTail, dataTail$High - dataTail$Low)
+```
+
+### Daily close vs open
+
+```{r, fig.width=figureWidth, fig.height=figureHeight, echo=FALSE}
+timePlot(dataTail, timesTail, dataTail$Close - dataTail$Open)
+```
+
+### Boxplots for above three statistics
+\Begin{multicols}{3}
+
+```{r, fig.width=figureWidth/3.3, fig.height=figureHeight, echo=FALSE, message=FALSE}
+boxPlot(dataTail, dataTail$Close)
+```
+
+```{r, fig.width=figureWidth/3.3, fig.height=figureHeight, echo=FALSE, message=FALSE}
+boxPlot(dataTail, dataTail$High - dataTail$Low)
+```
+
+```{r, fig.width=figureWidth/3.3, fig.height=figureHeight, echo=FALSE, message=FALSE}
+boxPlot(dataTail, dataTail$Close - dataTail$Open)
+```
+\End{multicols}
+
+### More stats
+```{r, echo=FALSE, results='asis'}
+tableGen(dataTail$Close, "Closing Stats")
+```
