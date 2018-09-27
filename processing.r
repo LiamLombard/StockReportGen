@@ -1,4 +1,7 @@
+library(flexdashboard)
+library(plotly)
 library(tseries)
+library(quantmod)
 library(ggplot2)
 library(dplyr)
 library(zoo)
@@ -7,26 +10,39 @@ settings <- read.csv("settings.csv", header=TRUE, sep=",")
 
 datazoo <- get.hist.quote(paste(settings$stockname), quiet=FALSE)
 data <- as.data.frame(datazoo)
-times <- as.Date(time(datazoo))
-figureWidth <- 7
-figureHeight <- 2
+data$date <- as.Date(time(datazoo))
 
 boxPlot <- function(data, x)
 {
-  ggplot(data) +
+  plot <- ggplot(data) +
   geom_boxplot(aes(x="", y=x), size=0.3)+
   xlab("") +
   coord_flip() +
   coord_cartesian(ylim = boxplot.stats(x)$stats[c(1, 5)]*1.1) +
   ylab("Price (USD)")
+
+  return(plot)
+
+ 
+}
+
+tripleBoxPlot <- function(data)
+{
+  p <- boxPlot(data, data$Close)
+  p2 <- boxPlot(data, data$High - data$Low)
+  p3 <- boxPlot(data, data$Close - data$Open)
+
+  subplot(ggplotly(p), ggplotly(p2),ggplotly(p3))
 }
 
 timePlot <- function(data, x, y)
 {
-  ggplot(data) +
+  plot <- ggplot(data) +
   geom_line(aes(x, y), size=0.3)+
   xlab("Year") +
   ylab("Price (USD)")
+
+  ggplotly(plot)
 }
 
 quarterPlot <- function(datazoo)
@@ -35,10 +51,12 @@ quarterPlot <- function(datazoo)
   tempdata$dates <- as.Date(time(datazoo)) 
   tempdata$quarter <- quarters(tempdata$date)
 
-  ggplot(tempdata, aes(dates, Close, colour = quarter)) +
+  plot <-ggplot(tempdata, aes(dates, Close, colour = quarter)) +
   geom_line(size=0.3)+
   xlab("Year") +
   ylab("Price (USD)")
+
+  ggplotly(plot)
 }
 
 tableGen <-function(data, caption)
