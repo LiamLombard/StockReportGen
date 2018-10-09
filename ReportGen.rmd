@@ -1,13 +1,17 @@
 ---
-title: "Stock Reporting"
-output: 
+title: "Stock Reporting - `r params$stock`"
+output:
   flexdashboard::flex_dashboard:
     orientation: columns
+params:
+  stock: "GOOG"
 ---
-
 
 ```{r setup, include=FALSE}
 source("processing.r");
+datazoo <- get.hist.quote(paste(params$stock), quiet=FALSE)
+data <- as.data.frame(datazoo)
+data$date <- as.Date(time(datazoo))
 ```
 # All Time
 Column {data-width=550}
@@ -40,7 +44,7 @@ timePlot(data, data$date, data$Close - data$Open)
 ```
 
 
-### Boxplot Closing
+### Boxplot Closing - High Vs Low - Open Vs Close
 
 ```{r, echo=FALSE, message=FALSE}
 tripleBoxPlot(data)
@@ -95,7 +99,7 @@ valueBox(mean, color = "primary")
 
 # Last Year
 
- Column {data-width=550}
+Column {data-width=550}
 -----------------------------------------------------------------------
 
 ### All Time Closing
@@ -127,7 +131,7 @@ timePlot(dataTail, dataTail$date, dataTail$Close - dataTail$Open)
 ```
 
 
-### Boxplot Closing
+### Boxplot Closing - High Vs Low - Open Vs Close
 
 ```{r, echo=FALSE, message=FALSE}
 tripleBoxPlot(dataTail)
@@ -176,4 +180,21 @@ valueBox(stddev_ly, color = "primary")
 ```{r}
 mean_ly <- mean(dataTail$Close)
 valueBox(mean_ly, color = ifelse(mean_ly > mean, "success", "primary"))
+```
+
+# "Prophet" Forecasting
+
+Column {data-width=550}
+-----------------------------------------------------------------------
+
+### Forecast from all data
+
+```{r, echo=FALSE, warnings=FALSE}
+forecastForecast(data$date, data$Close)
+```
+
+### Forecast from last years data
+
+```{r, echo=FALSE, warnings=FALSE}
+forecastForecast(dataTail$date, dataTail$Close)
 ```

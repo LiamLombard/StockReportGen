@@ -8,5 +8,7 @@ Running:
  *  `Rscript compile.r`
  *  View generated report
 
-No machine learning algorithms are used currently in this project, all it does is give you an idea of the past performance of your chosen stock.
- 
+Started work on using forecasting methods for some vague predictions although very early days.
+
+![full data](/screenshots/main-page.png)
+![last year data](/screenshots/last-year.png)

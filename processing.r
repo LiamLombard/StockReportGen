@@ -1,16 +1,12 @@
 library(flexdashboard)
+library(prophet)
+library(dygraphs)
 library(plotly)
 library(tseries)
 library(quantmod)
 library(ggplot2)
 library(dplyr)
 library(zoo)
-
-settings <- read.csv("settings.csv", header=TRUE, sep=",")
-
-datazoo <- get.hist.quote(paste(settings$stockname), quiet=FALSE)
-data <- as.data.frame(datazoo)
-data$date <- as.Date(time(datazoo))
 
 boxPlot <- function(data, x)
 {
@@ -22,8 +18,6 @@ boxPlot <- function(data, x)
   ylab("Price (USD)")
 
   return(plot)
-
- 
 }
 
 tripleBoxPlot <- function(data)
@@ -59,10 +53,22 @@ quarterPlot <- function(datazoo)
   ggplotly(plot)
 }
 
-tableGen <-function(data, caption)
+prophetForecast <- function(dates, values)
 {
-  Data <- c(mean(data), sd(data))
-  thistable <- data.frame(Data)
-  thistable <- cbind(Stats = c("Mean", "SD"), thistable)
-  knitr::kable(t(thistable), caption=caption)
+  model <- data.frame(dates, values)
+  colnames(model) <- c("ds", "y")
+  fitModel <- prophet(model)
+  future <- make_future_dataframe(fitModel, periods = 30)
+  forecast <- predict(fitModel, future)
+  dyplot.prophet(fitModel, forecast)
+}
+
+forecastForecast<- function(dates, values)
+{
+  model <- data.frame(dates, values)
+  colnames(model) <- c("ds", "y")
+  fitModel <- prophet(model)
+  future <- make_future_dataframe(fitModel, periods = 30)
+  forecast <- predict(fitModel, future)
+  dyplot.prophet(fitModel, forecast)
 }
